@@ -1,0 +1,142 @@
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fa fa-plus"></i> Post New Blog
+
+                    <!-- <a> Created Date : {{ blog.created_at }}  </a> -->
+
+                    <div class="card-actions">
+                        <a class="btn-setting"><i class="icon-settings"></i></a>
+                        <a class="btn-minimize"><i class="icon-arrow-up"></i></a>
+                        <a class="btn-close"><i class="icon-close"></i></a>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div *ngIf="!isDisplay">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h6>
+                                    {{ blog.title }}
+                                </h6>
+                            </div>
+                            <div class="col-md-1">
+                                <h6 class="pull-right">
+                                    <a href="javascript:void(0)" (click)="editPost(blog)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </h6>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <i class="icon-like icons font-2xl d-block mt-4"></i> Likes<sup> {{ blog.likes }}</sup>
+                            </div>
+                            <div class="col-md-2">
+                                <i class="icon-share-alt icons font-2xl d-block mt-4"></i> Shared <sup> {{ blog.shared }}</sup>
+                            </div>
+                            <div class="col-md-2">
+                                <i class="icon-eye icons font-2xl d-block mt-4"></i> Total View <sup>  {{ blog.total_visit }} </sup>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-9">
+                                <h6>Description </h6>
+                                <p class="e2e-inner-html-bound" [innerHTML]="blog.description"></p>
+                                <h6>
+                                    Slug
+                                </h6>
+                                <p>
+                                    {{ blog.slug }}
+                                </p>
+                                <figure>
+                                    <div class="img-responsive" *ngFor="let image of blog.images let i = index">
+                                        <img src="{{ image.file_path }}" />
+                                    </div>
+                                </figure>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fileUploadContainer">
+                                    <app-upload></app-upload>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-form-container" *ngIf="isDisplay">
+                        <form [formGroup]="postForm" class="form-2orizontal" (ngSubmit)="submitPost(postForm.value)">
+                            <div class="form-group">
+                                <div *ngFor="let c of categories let i = index" class="form-check form-check-inline">
+                                    <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                                        <input type="checkbox" [checked]="c.checked" (click)="addCategory(c.id)" class="custom-control-input">
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description">{{c.name}}</span>
+                                    </label>
+                                </div>
+                                <p class="help-block text-danger" *ngIf="category"> Check atleast one category </p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="prependedInput"> <strong> Title *</strong> </label>
+                                <div class="controls">
+                                    <div class="input-prepend input-group">
+                                        <span class="input-group-addon"> <i class="fa fa-text-width"></i> </span>
+                                        <input id="prependedInput" (keyup)="generateSlug(title)" formControlName="title" class="form-control" size="16" type="text">
+                                    </div>
+                                    <p class="help-block text-danger" *ngIf="title.invalid && (title.dirty || title.touched)"> Enter valid title only accept alphanumeric string </p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-control-label" for="prependedInput"> <strong> Description * </strong> </label>
+                                <div class="controls">
+                                    <ckeditor [(ngModel)]="ckeditorContent" formControlName="description" [config]="{uiColor: '#dddddd'}" [readonly]="false" debounce="500">
+                                    </ckeditor>
+
+                                    <p class="help-block text-danger" *ngIf="description.invalid && (description.dirty || description.touched)"> Description is required </p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-control-label" for="appendedInput"><strong> Slug * </strong></label>
+                                <div class="controls">
+                                    <div class="input-group">
+                                        <input id="appendedInput" formControlName="slug" class="form-control" size="16" type="text">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" (click)="generateSlug(title)">Generate Slug</button>
+                                    </span>
+                                    </div>
+                                    <p class="help-block text-danger" *ngIf="slug.invalid && (slug.dirty || slug.touched)"> Enter valid slug only accept alphanumeric string </p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="switch switch-text switch-pill switch-primary">
+                                    <input type="checkbox" formControlName="status" class="switch-input switch-lg" [checked]="postForm.value.status"> 
+                                    <span class="switch-label" data-on="On" data-off="Off"></span>
+                                    <span class="switch-handle"></span>
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" [disabled]="!postForm.valid">
+                                    <span *ngIf="postForm.value.id else add">
+                                        Update
+                                    </span>                                 
+                                </button>
+                                <ng-template #add>
+                                    <i class="fa fa-plus"></i> Save changes
+                                </ng-template>
+                                <button class="btn btn-default" type="button">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--/.col-->
+    </div>
+    <!--/.row-->
+</div>

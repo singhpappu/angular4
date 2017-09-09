@@ -1,0 +1,20 @@
+// Here you can add other styles
+$bg-image: url('../assets/img/page-loader.gif');
+#preloader {
+    background-image: $bg-image;
+    position: absolute;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background-size: 5%;
+    bottom: 0;
+    background-color: rgba(66, 65, 65, 0.59);
+    display: none;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.btn {
+    cursor: pointer
+}
